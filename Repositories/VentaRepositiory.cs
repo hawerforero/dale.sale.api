@@ -32,7 +32,7 @@ namespace dale.sale.api.Repositories
 
         public async Task<List<Venta>> GetAll()
         {
-            return await _context.Venta.ToListAsync();
+            return await _context.Venta.Include(x=>x.Cliente).Include(x=>x.Producto).ToListAsync();
         }
 
         public async Task<Venta> Update(Venta entity)
