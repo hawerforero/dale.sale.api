@@ -9,11 +9,12 @@ namespace dale.sale.api.Models
     {
         [Key]
         public Guid Id { get; set; }
-        public long ClienteId { get; set; }
+        public Guid ClienteId { get; set; }
         public Cliente Cliente { get; set; }
         public Guid ProductoId { get; set; }
         public Producto Producto { get; set; }
         public Double ValorUnitario { get; set; }  
+        public int Cantidad { get; set; }  
         public Double ValorTotal { get; set; }       
      
     }

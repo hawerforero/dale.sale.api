@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using dale.sale.api.Contexts;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -11,6 +12,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using Microsoft.EntityFrameworkCore;
+using dale.sale.api.Repositories;
+using dale.sale.api.Services;
 
 namespace dale.sale.api
 {
@@ -28,6 +32,22 @@ namespace dale.sale.api
         {
 
             services.AddControllers();
+            services.AddCors(options =>
+            {
+                options.AddPolicy("PermitirApiRequest",
+                    builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+            });
+            services.AddAutoMapper(typeof(Startup));
+
+            services.AddDbContext<ApplicationDbContext>(options =>options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            
+            services.AddScoped<IProductoRepository, ProductoRepository>();
+            services.AddScoped<IProductoService, ProductoService>();
+            services.AddScoped<IClienteRepository, ClienteRepository>();
+            services.AddScoped<IClienteService, ClienteService>();
+            services.AddScoped<IVentaRepository, VentaRepository>();
+            services.AddScoped<IVentaService, VentaService>();
+            
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "dale.sale.api", Version = "v1" });
@@ -49,6 +69,8 @@ namespace dale.sale.api
             app.UseRouting();
 
             app.UseAuthorization();
+            
+            app.UseCors("PermitirApiRequest");
 
             app.UseEndpoints(endpoints =>
             {
